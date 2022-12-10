@@ -1,0 +1,47 @@
+Deep Extreme Cut: From Extreme Points to Object Segmentation
+
+Deep learning techniques have revolutionized the field of computer vision since their explosive appearance in the ImageNet competition , where the task is to classify images into predefined categories, that is, algorithms produce
+one label for each input image. Image and video segmentation, on the other hand, generate dense predictions whereeach pixel receives a (potentially different) output classification. Deep learning algorithms, especially Convolutional
+Neural Networks (CNNs), were adapted to this scenario by removing the final fully connected layers to produce dense predictions.
+
+Extreme points
+One of the most common ways to perform weakly supervised segmentation is drawing a bounding box around the object of interest . However, in order to draw the corners of a bounding box, the user has to click
+points outside the object, drag the box diagonally, and adjust it several times to obtain a tight, accurate bounding box.This process is cognitively demanding, with increased error
+rates and labelling times. Recently, Papadopoulos et al.  have shown a much more efficient way of obtaining a bounding box using extreme clicks, spending on average 7.2 seconds instead of
+34.5 seconds required for drawing a bounding box around an object . They show that extreme clicking leads to high quality bounding boxes that are on par with the ones
+obtained by traditional methods. These extreme points belong to the top, bottom, left-most and right-most parts of the object. Extreme-clicking annotations by definition provide
+more information than a bounding box; they contain fourpoints that are on the boundary of the object, from which one can easily obtain the bounding-box. We use extreme
+points for object segmentation leveraging their two main outcomes: the points and their inferred bounding box.
+
+Segmentation from Extreme Points
+The overview of our method is shown in Figure 2. The annotated extreme points are given as a guiding signal to the input of the network. To this end, we create a heatmap
+with activations in the regions of extreme points. We center a 2D Gaussian around each of the points, in order to create a single heatmap. The heatmap is concatenated with the
+RGB channels of the input image, to form a 4-channel input for the CNN. In order to focus on the object of interest, the input is cropped by the bounding box, formed from the extreme point annotations. To include context on the resulting crop, we relax the tight bounding box by several pixels. After the pre-processing step that comes exclusively from the
+extreme clicks, the input consists of an RGB crop including an object, plus its extreme points.
+
+Use cases for DEXTR
+Class-agnostic Instance Segmentation: One application of DEXTR is class-agnostic instance segmentation. In this task, we click on the extreme points of an object in an image, and we obtain a mask prediction for it. The selected
+object can be of any class, as our method is class agnostic. In Section 4.3, we compare our method with the state of the art in two different datasets, PASCAL and Grabcut, where we improve current results. We also analyse
+the generalization of our method to other datasets and tounseen categories. We conclude positive results in both experiments: the performance drop for testing on a different
+dataset than the one used for training is very small and the result achieved is the same whether the class has been seen during training or not.
+
+Annotation: The common annotation pipeline for segmentation can also be assisted by DEXTR. In this framework, instead of detailed polygon labels, the workload of
+the annotator is reduced to only providing the extreme
+points of an object, and DEXTR produces the desired segmentation. In this pipeline, the labelling cost is reduced by
+a factor of 10 (from 79 seconds needed for a mask, to 7.2
+seconds needed for the extreme clicks) [25].
+In Section 4.4, the quality of the produced masks are
+validated when used to train a semantic segmentation algorithm. We show that our method produces very accurate
+masks and the results trained on them are on par with those
+trained on the ground-truth annotations in terms of quality,
+with much less annotation budget.
+Video Object Segmentation: DEXTR can also improve
+the pipeline of video object segmentation. We focus on
+the semi-supervised setting where methods use one or more
+masks as inputs to produce the segmentation of the whole
+video. Our aim is to replace the costly per pixel annotation masks by the masks produced by our algorithm after the user has selected the extreme points of a certain object,
+and re-train strongly supervised state-of-the-art video segmentation architectures.
+
+
+
+
